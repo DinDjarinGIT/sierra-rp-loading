@@ -30,11 +30,13 @@
             top: 0;
             left: 0;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            filter: blur(20px);
+            transition: opacity 1s ease-in-out, filter 1s ease-in-out;
         }
 
         .background-image.visible {
             opacity: 1;
+            filter: blur(0);
         }
 
         /* Overlay sombre uniquement sur l'image */
@@ -46,7 +48,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.4); /* Ombre sombre */
             z-index: 1;
-            pointer-events: none; /* Empêche l'overlay d'interférer avec les clics */
+            pointer-events: none;
         }
 
         .character {
@@ -55,7 +57,7 @@
             bottom: 0;
             opacity: 0;
             transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-            z-index: 10; /* Au-dessus de l'overlay */
+            z-index: 10;
         }
 
         @keyframes float-left-right {
@@ -130,8 +132,8 @@
 
     // 🔥 Fichiers locaux des textures des personnages
     const characters = [
-        'medias/char01.png', // Remplace le lien GTAbase par un fichier local
-        'medias/char02.png'  // Remplace le lien GTAbase par un fichier local
+        'medias/char01.png',
+        'medias/char02.png'
     ];
 
     let currentCharacterIndex = 0;
@@ -147,7 +149,7 @@
     // ✅ Réduction du volume de la musique à 30%
     audio.volume = 0.3;
 
-    // Lancer la musique
+    // 🎵 Lancer la musique
     function toggleAudio() {
         if (audio.paused) {
             audio.play();
@@ -158,15 +160,24 @@
         }
     }
 
-    // Changer l'image de fond toutes les 8 secondes
+    // 🌄 Changer l'image de fond avec effet de flou
     function switchBackground() {
-        backgroundImage.src = backgroundImages[currentBackgroundIndex];
-        backgroundImage.classList.add('visible');
+        // Commence par flouter et cacher l'image actuelle
+        backgroundImage.classList.remove('visible');
 
-        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+        setTimeout(() => {
+            // Change l'image après le flou
+            backgroundImage.src = backgroundImages[currentBackgroundIndex];
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+
+            // Réactive l'effet d'apparition
+            setTimeout(() => {
+                backgroundImage.classList.add('visible');
+            }, 100);
+        }, 500); // Temps du flou
     }
 
-    // Changer le personnage
+    // 🦸‍♂️ Changer le personnage
     function switchCharacter() {
         character.style.opacity = '0';
 
