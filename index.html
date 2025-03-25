@@ -30,13 +30,13 @@
             top: 0;
             left: 0;
             opacity: 0;
-            filter: blur(5px); /* Flou léger */
+            filter: blur(5px);
             transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out;
         }
 
         .background-image.visible {
             opacity: 1;
-            filter: blur(0px); /* Supprime le flou progressivement */
+            filter: blur(0px);
         }
 
         /* Overlay sombre uniquement sur l'image */
@@ -106,7 +106,8 @@
 
 <!-- Conteneur pour l'image de fond + overlay -->
 <div class="background-container">
-    <img id="background-image" class="background-image" src="" alt="Background" />
+    <img id="background-image-1" class="background-image" src="" alt="Background" />
+    <img id="background-image-2" class="background-image" src="" alt="Background" />
     <div class="background-overlay"></div>
 </div>
 
@@ -124,94 +125,58 @@
 </audio>
 
 <script>
-    const audio = document.getElementById('background-music');
-    const audioControl = document.querySelector('.audio-control');
-    const character = document.getElementById('character');
-    const backgroundImage = document.getElementById('background-image');
+const audio = document.getElementById('background-music');
+const audioControl = document.querySelector('.audio-control');
+const character = document.getElementById('character');
+const backgroundImage1 = document.getElementById('background-image-1');
+const backgroundImage2 = document.getElementById('background-image-2');
 
-    // 🔥 Fichiers locaux des textures des personnages
-    const characters = [
-        'medias/char01.png',
-        'medias/char02.png'
-    ];
+const backgroundImages = [
+    'medias/01.jpg',
+    'medias/02.jpg',
+    'medias/03.jpg'
+];
 
-    let currentCharacterIndex = 0;
-    let direction = 'left-to-right';
+let currentBackgroundIndex = 0;
+let showingImage1 = true;
 
-    const backgroundImages = [
-        'medias/01.jpg',
-        'medias/02.jpg',
-        'medias/03.jpg'
-    ];
-    let currentBackgroundIndex = 0;
+// ✅ Réduction du volume de la musique à 30%
+audio.volume = 0.3;
 
-    // ✅ Réduction du volume de la musique à 30%
-    audio.volume = 0.3;
+// ✅ Lancer automatiquement la musique au chargement
+window.onload = () => {
+    audio.play().catch(error => console.log("Autoplay bloqué :", error));
+    audioControl.textContent = '⏸️ Couper la musique';
+};
 
-    // 🎵 Lancer la musique
-    function toggleAudio() {
-        if (audio.paused) {
-            audio.play();
-            audioControl.textContent = '⏸️ Couper la musique';
-        } else {
-            audio.pause();
-            audioControl.textContent = '▶️ Activer la musique';
-        }
+// ✅ Gestion du bouton musique
+function toggleAudio() {
+    if (audio.paused) {
+        audio.play();
+        audioControl.textContent = '⏸️ Couper la musique';
+    } else {
+        audio.pause();
+        audioControl.textContent = '▶️ Activer la musique';
     }
+}
 
-    // 🌄 Changer l'image de fond avec effet de fondu
-    function switchBackground() {
-        // Retire l'effet de fondu en cours
-        backgroundImage.classList.remove('visible');
+// ✅ Transition de fond d'écran fluide
+function switchBackground() {
+    const nextBackground = backgroundImages[currentBackgroundIndex];
+    const currentImage = showingImage1 ? backgroundImage1 : backgroundImage2;
+    const nextImage = showingImage1 ? backgroundImage2 : backgroundImage1;
 
-        setTimeout(() => {
-            // Change l'image après la transition
-            backgroundImage.src = backgroundImages[currentBackgroundIndex];
-            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+    nextImage.src = nextBackground;
+    nextImage.classList.add('visible');
+    currentImage.classList.remove('visible');
 
-            // Ajoute la transition de fondu
-            setTimeout(() => {
-                backgroundImage.classList.add('visible');
-            }, 100);
-        }, 1000); // Laisser le temps à l'effet de fondu de se terminer
-    }
+    currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+    showingImage1 = !showingImage1;
+}
 
-    // 🦸‍♂️ Changer le personnage
-    function switchCharacter() {
-        character.style.opacity = '0';
-
-        setTimeout(() => {
-            if (direction === 'left-to-right') {
-                direction = 'right-to-left';
-                character.style.animation = 'float-right-left 6s ease-in-out forwards';
-            } else {
-                direction = 'left-to-right';
-                character.style.animation = 'float-left-right 6s ease-in-out forwards';
-            }
-
-            currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
-            character.src = characters[currentCharacterIndex];
-
-            character.style.animation = 'none';
-            void character.offsetWidth;
-            character.style.animation = direction === 'left-to-right' ? 'float-left-right 6s ease-in-out forwards' : 'float-right-left 6s ease-in-out forwards';
-
-            character.style.opacity = '1';
-        }, 2000);
-    }
-
-    // Lancer le changement de personnage après l'animation
-    character.addEventListener('animationend', switchCharacter);
-
-    // Initialiser le personnage
-    setTimeout(() => {
-        character.style.opacity = '1';
-        character.style.animation = 'float-left-right 6s ease-in-out forwards';
-    }, 500);
-
-    // Lancer le changement d'image de fond
-    switchBackground(); 
-    setInterval(switchBackground, 8000);
+// ✅ Changer d'image toutes les 8 secondes
+switchBackground(); 
+setInterval(switchBackground, 8000);
 </script>
 
 </body>
