@@ -128,10 +128,12 @@
     const backgroundImage = document.getElementById('background-image');
     const backgroundOverlay = document.querySelector('.background-overlay');
 
+    // 🔥 Fichiers locaux des textures des personnages
     const characters = [
-        'medias/char01.png',
-        'medias/char02.png'
+        'medias/char01.png', // Remplace le lien GTAbase par un fichier local
+        'medias/char02.png'  // Remplace le lien GTAbase par un fichier local
     ];
+
     let currentCharacterIndex = 0;
     let direction = 'left-to-right';
 
@@ -200,7 +202,6 @@
     // Lancer le changement d'image de fond
     switchBackground(); 
     setInterval(switchBackground, 8000);
-
 </script>
 
 </body>
