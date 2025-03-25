@@ -56,7 +56,7 @@
             width: 70%;
             bottom: 0;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
             z-index: 10;
         }
 
@@ -132,6 +132,35 @@
 <script>
 const audio = document.getElementById('background-music');
 const audioControl = document.querySelector('.audio-control');
+
+// ✅ Réduction du volume à 30%
+audio.volume = 0.3;
+
+// ✅ Lancer la musique en mode sourdine (contourne le blocage navigateur)
+audio.play().catch(error => console.log("Autoplay bloqué :", error));
+
+// ✅ Activer la musique après interaction utilisateur
+window.addEventListener('click', () => {
+    if (audio.muted) {
+        audio.muted = false;
+        audio.play();
+        audioControl.textContent = '⏸️ Couper la musique';
+    }
+}, { once: true });
+
+// ✅ Gestion du bouton musique
+function toggleAudio() {
+    if (audio.paused) {
+        audio.play();
+        audioControl.textContent = '⏸️ Couper la musique';
+    } else {
+        audio.pause();
+        audioControl.textContent = '▶️ Activer la musique';
+    }
+}
+    
+const audio = document.getElementById('background-music');
+const audioControl = document.querySelector('.audio-control');
 const character = document.getElementById('character');
 const backgroundImage1 = document.getElementById('background-image-1');
 const backgroundImage2 = document.getElementById('background-image-2');
@@ -156,12 +185,13 @@ let direction = 'left-to-right';
 audio.volume = 0.3;
 
 // ✅ Autoplay de la musique après interaction utilisateur
+audio.muted = true;
+audio.play().catch(error => console.log("Autoplay bloqué :", error));
+
 window.addEventListener('click', () => {
-    if (audio.muted) {
-        audio.muted = false;
-        audio.play();
-        audioControl.textContent = '⏸️ Couper la musique';
-    }
+    audio.muted = false;
+    audio.play().catch(error => console.log("Autoplay bloqué :", error));
+    audioControl.textContent = '⏸️ Couper la musique';
 }, { once: true });
 
 // ✅ Gestion du bouton musique
@@ -182,11 +212,14 @@ function switchBackground() {
     const nextImage = showingImage1 ? backgroundImage2 : backgroundImage1;
 
     nextImage.src = nextBackground;
-    nextImage.classList.add('visible');
-    currentImage.classList.remove('visible');
 
-    currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
-    showingImage1 = !showingImage1;
+    nextImage.onload = () => {
+        nextImage.classList.add('visible');
+        currentImage.classList.remove('visible');
+
+        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+        showingImage1 = !showingImage1;
+    };
 }
 
 // ✅ Changer d'image toutes les 8 secondes
