@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIERRA Roleplay - Loading</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        /* Conteneur pour l'image de fond + overlay */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .background-image.visible {
+            opacity: 1;
+        }
+
+        /* Overlay sombre uniquement sur l'image */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Ombre sombre */
+            z-index: 1;
+            pointer-events: none; /* Empêche l'overlay d'interférer avec les clics */
+        }
+
+        .character {
+            position: absolute;
+            width: 70%;
+            bottom: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            z-index: 10; /* Au-dessus de l'overlay */
+        }
+
+        @keyframes float-left-right {
+            0% {
+                left: -20%;
+            }
+            100% {
+                left: -15%;
+            }
+        }
+
+        @keyframes float-right-left {
+            0% {
+                right: -20%;
+            }
+            100% {
+                right: -15%;
+            }
+        }
+
+        .title {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 64px;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+            z-index: 20;
+        }
+
+        .audio-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Conteneur pour l'image de fond + overlay -->
+<div class="background-container">
+    <img id="background-image" class="background-image" src="" alt="Background" />
+    <div class="background-overlay"></div>
+</div>
+
+<!-- Personnages GTA (échange automatique) -->
+<img id="character" src="medias/char01.png" alt="Character" class="character" />
+
+<!-- Titre -->
+<div class="title">SIERRA Roleplay</div>
+
+<!-- Bouton de contrôle de la musique -->
+<div class="audio-control" onclick="toggleAudio()">▶️ Activer la musique</div>
+
+<audio id="background-music" loop>
+    <source src="medias/music01.mp3" type="audio/mp3">
+</audio>
+
+<script>
+    const audio = document.getElementById('background-music');
+    const audioControl = document.querySelector('.audio-control');
+    const character = document.getElementById('character');
+    const backgroundImage = document.getElementById('background-image');
+    const backgroundOverlay = document.querySelector('.background-overlay');
+
+    const characters = [
+        'medias/char01.png',
+        'medias/char02.png'
+    ];
+    let currentCharacterIndex = 0;
+    let direction = 'left-to-right';
+
+    const backgroundImages = [
+        'medias/01.jpg',
+        'medias/02.jpg',
+        'medias/03.jpg'
+    ];
+    let currentBackgroundIndex = 0;
+
+    // ✅ Réduction du volume de la musique à 30%
+    audio.volume = 0.3;
+
+    // Lancer la musique
+    function toggleAudio() {
+        if (audio.paused) {
+            audio.play();
+            audioControl.textContent = '⏸️ Couper la musique';
+        } else {
+            audio.pause();
+            audioControl.textContent = '▶️ Activer la musique';
+        }
+    }
+
+    // Changer l'image de fond toutes les 8 secondes
+    function switchBackground() {
+        backgroundImage.src = backgroundImages[currentBackgroundIndex];
+        backgroundImage.classList.add('visible');
+
+        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+    }
+
+    // Changer le personnage
+    function switchCharacter() {
+        character.style.opacity = '0';
+
+        setTimeout(() => {
+            if (direction === 'left-to-right') {
+                direction = 'right-to-left';
+                character.style.animation = 'float-right-left 6s ease-in-out forwards';
+            } else {
+                direction = 'left-to-right';
+                character.style.animation = 'float-left-right 6s ease-in-out forwards';
+            }
+
+            currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+            character.src = characters[currentCharacterIndex];
+
+            character.style.animation = 'none';
+            void character.offsetWidth;
+            character.style.animation = direction === 'left-to-right' ? 'float-left-right 6s ease-in-out forwards' : 'float-right-left 6s ease-in-out forwards';
+
+            character.style.opacity = '1';
+        }, 2000);
+    }
+
+    // Lancer le changement de personnage après l'animation
+    character.addEventListener('animationend', switchCharacter);
+
+    // Initialiser le personnage
+    setTimeout(() => {
+        character.style.opacity = '1';
+        character.style.animation = 'float-left-right 6s ease-in-out forwards';
+    }, 500);
+
+    // Lancer le changement d'image de fond
+    switchBackground(); 
+    setInterval(switchBackground, 8000);
+
+</script>
+
+</body>
+</html>
