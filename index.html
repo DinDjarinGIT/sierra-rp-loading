@@ -30,11 +30,13 @@
             top: 0;
             left: 0;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            filter: blur(5px); /* Flou léger */
+            transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out;
         }
 
         .background-image.visible {
             opacity: 1;
+            filter: blur(0px); /* Supprime le flou progressivement */
         }
 
         /* Overlay sombre uniquement sur l'image */
