@@ -142,13 +142,20 @@ const backgroundImages = [
     'medias/03.jpg'
 ];
 
+const characters = [
+    'medias/char01.png',
+    'medias/char02.png'
+];
+
 let currentBackgroundIndex = 0;
 let showingImage1 = true;
+let currentCharacterIndex = 0;
+let direction = 'left-to-right';
 
 // ✅ Réduction du volume de la musique à 30%
 audio.volume = 0.3;
 
-// ✅ Autoplay de la musique après interaction utilisateur (contournement)
+// ✅ Autoplay de la musique après interaction utilisateur
 audio.muted = true;
 audio.play().catch(error => console.log("Autoplay bloqué :", error));
 
@@ -175,10 +182,8 @@ function switchBackground() {
     const currentImage = showingImage1 ? backgroundImage1 : backgroundImage2;
     const nextImage = showingImage1 ? backgroundImage2 : backgroundImage1;
 
-    // Préchargement pour éviter le clignotement
     nextImage.src = nextBackground;
 
-    // Attendre que l'image soit chargée avant de faire la transition
     nextImage.onload = () => {
         nextImage.classList.add('visible');
         currentImage.classList.remove('visible');
@@ -193,13 +198,6 @@ switchBackground();
 setInterval(switchBackground, 8000);
 
 // ✅ Changement automatique du personnage
-const characters = [
-    'medias/char01.png',
-    'medias/char02.png'
-];
-let currentCharacterIndex = 0;
-let direction = 'left-to-right';
-
 function switchCharacter() {
     character.style.opacity = '0';
 
@@ -219,11 +217,13 @@ function switchCharacter() {
     }, 2000);
 }
 
+// ✅ Lancer la première apparition du personnage après le chargement
 setTimeout(() => {
     character.style.opacity = '1';
     character.style.animation = 'float-left-right 6s ease-in-out forwards';
 }, 500);
 
+// ✅ Relancer l'animation après chaque cycle
 character.addEventListener('animationend', switchCharacter);
 </script>
 
