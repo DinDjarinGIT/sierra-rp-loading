@@ -30,7 +30,7 @@
             top: 0;
             left: 0;
             opacity: 0;
-            filter: blur(5px);
+            filter: blur(3px);
             transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out;
         }
 
@@ -99,6 +99,11 @@
             color: white;
             font-size: 16px;
             z-index: 20;
+            transition: background 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(0, 0, 0, 0.7);
         }
     </style>
 </head>
@@ -143,11 +148,15 @@ let showingImage1 = true;
 // ✅ Réduction du volume de la musique à 30%
 audio.volume = 0.3;
 
-// ✅ Lancer automatiquement la musique au chargement
-window.onload = () => {
+// ✅ Autoplay de la musique après interaction utilisateur (contournement)
+audio.muted = true;
+audio.play().catch(error => console.log("Autoplay bloqué :", error));
+
+window.addEventListener('click', () => {
+    audio.muted = false;
     audio.play().catch(error => console.log("Autoplay bloqué :", error));
     audioControl.textContent = '⏸️ Couper la musique';
-};
+}, { once: true });
 
 // ✅ Gestion du bouton musique
 function toggleAudio() {
@@ -160,23 +169,62 @@ function toggleAudio() {
     }
 }
 
-// ✅ Transition de fond d'écran fluide
+// ✅ Transition fluide d'image de fond
 function switchBackground() {
     const nextBackground = backgroundImages[currentBackgroundIndex];
     const currentImage = showingImage1 ? backgroundImage1 : backgroundImage2;
     const nextImage = showingImage1 ? backgroundImage2 : backgroundImage1;
 
+    // Préchargement pour éviter le clignotement
     nextImage.src = nextBackground;
-    nextImage.classList.add('visible');
-    currentImage.classList.remove('visible');
 
-    currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
-    showingImage1 = !showingImage1;
+    // Attendre que l'image soit chargée avant de faire la transition
+    nextImage.onload = () => {
+        nextImage.classList.add('visible');
+        currentImage.classList.remove('visible');
+
+        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+        showingImage1 = !showingImage1;
+    };
 }
 
 // ✅ Changer d'image toutes les 8 secondes
 switchBackground(); 
 setInterval(switchBackground, 8000);
+
+// ✅ Changement automatique du personnage
+const characters = [
+    'medias/char01.png',
+    'medias/char02.png'
+];
+let currentCharacterIndex = 0;
+let direction = 'left-to-right';
+
+function switchCharacter() {
+    character.style.opacity = '0';
+
+    setTimeout(() => {
+        currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+        character.src = characters[currentCharacterIndex];
+
+        if (direction === 'left-to-right') {
+            character.style.animation = 'float-right-left 6s ease-in-out forwards';
+            direction = 'right-to-left';
+        } else {
+            character.style.animation = 'float-left-right 6s ease-in-out forwards';
+            direction = 'left-to-right';
+        }
+
+        character.style.opacity = '1';
+    }, 2000);
+}
+
+setTimeout(() => {
+    character.style.opacity = '1';
+    character.style.animation = 'float-left-right 6s ease-in-out forwards';
+}, 500);
+
+character.addEventListener('animationend', switchCharacter);
 </script>
 
 </body>
