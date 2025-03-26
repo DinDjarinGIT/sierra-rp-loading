@@ -161,8 +161,6 @@ window.addEventListener('click', () => {
     audioControl.textContent = '⏸️ Couper la musique';
 }, { once: true });
 
-audio.play();
-
 // ✅ Gestion du bouton musique
 function toggleAudio() {
     if (audio.paused) {
@@ -223,6 +221,8 @@ setTimeout(() => {
 
 // ✅ Relancer le cycle après chaque fin d'animation
 character.addEventListener('animationend', switchCharacter);
+
+toggleAudio()
 </script>
 
 </body>
