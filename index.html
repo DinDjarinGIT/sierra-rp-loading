@@ -161,6 +161,8 @@ window.addEventListener('click', () => {
     audioControl.textContent = '⏸️ Couper la musique';
 }, { once: true });
 
+audio.play();
+
 // ✅ Gestion du bouton musique
 function toggleAudio() {
     if (audio.paused) {
