@@ -143,7 +143,10 @@ const backgroundImages = [
 
 const characters = [
     'medias/char01.png',
-    'medias/char02.png'
+    'medias/char02.png',
+    'medias/char03.png',
+    'medias/char04.png',
+    'medias/char05.png',
 ];
 
 let currentBackgroundIndex = 0;
@@ -153,9 +156,6 @@ let direction = 'left-to-right';
 
 // ✅ Volume réduit à 30%
 audio.volume = 0.3;
-
-audio.play();
-audioControl.textContent = '⏸️ Couper la musique';
 
 // ✅ Gestion du bouton musique
 function toggleAudio() {
