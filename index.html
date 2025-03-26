@@ -157,6 +157,13 @@ let direction = 'left-to-right';
 // ✅ Volume réduit à 30%
 audio.volume = 0.3;
 
+// ✅ Débloquer la lecture après interaction utilisateur
+window.addEventListener('click', () => {
+    audio.muted = false;
+    audio.play().catch(err => console.log('Autoplay bloqué :', err));
+    audioControl.textContent = '⏸️ Couper la musique';
+}, { once: true });
+
 // ✅ Gestion du bouton musique
 function toggleAudio() {
     if (audio.paused) {
