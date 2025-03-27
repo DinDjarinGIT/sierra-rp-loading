@@ -127,12 +127,11 @@
 <!-- Bouton de contrôle de la musique -->
 <div class="audio-control" onclick="toggleAudio()">▶️ Activer la musique</div>
 
-<audio id="background-music" loop autoplay muted>
+<audio id="background-music" loop autoplay>
     <source src="medias/music01.mp3" type="audio/mp3">
 </audio>
 
 <script>
-const audio = document.getElementById('background-music');
 const audioControl = document.querySelector('.audio-control');
 const character = document.getElementById('character');
 const backgroundImage1 = document.getElementById('background-image-1');
@@ -156,27 +155,6 @@ let currentBackgroundIndex = 0;
 let showingImage1 = true;
 let currentCharacterIndex = 0;
 let direction = 'left-to-right';
-
-// ✅ Volume réduit à 30%
-audio.volume = 0.3;
-
-// ✅ Débloquer la lecture après interaction utilisateur
-window.addEventListener('click', () => {
-    audio.muted = false;
-    audio.play().catch(err => console.log('Autoplay bloqué :', err));
-    audioControl.textContent = '⏸️ Couper la musique';
-}, { once: true });
-
-// ✅ Gestion du bouton musique
-function toggleAudio() {
-    if (audio.paused) {
-        audio.play();
-        audioControl.textContent = '⏸️ Couper la musique';
-    } else {
-        audio.pause();
-        audioControl.textContent = '▶️ Activer la musique';
-    }
-}
 
 // ✅ Transition fluide d'image de fond
 function switchBackground() {
