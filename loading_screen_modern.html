@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - Server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent-red: #d32f2f;
+            --accent-orange: #ff6b35;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --overlay-dark: rgba(0, 0, 0, 0.75);
+            --overlay-gradient: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #1a1a1a;
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Background image */
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('wp2815199.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(1) contrast(1.1);
+            animation: subtleZoom 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes subtleZoom {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Overlay gradient */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-gradient);
+            z-index: 1;
+        }
+
+        /* Vignette effect */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Main content */
+        .container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 60px 80px;
+        }
+
+        /* Top left corner info */
+        .server-info {
+            position: absolute;
+            top: 50px;
+            left: 60px;
+            z-index: 10;
+        }
+
+        .server-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 8px;
+        }
+
+        .server-ip {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        /* Main title section */
+        .title-section {
+            margin-bottom: 60px;
+        }
+
+        .mode-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .map-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.8);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .map-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.6;
+            font-weight: 400;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading section */
+        .loading-section {
+            max-width: 500px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .loading-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .loading-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .loading-percentage {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Progress bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-red) 0%, var(--accent-orange) 100%);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px var(--accent-red);
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px var(--accent-red);
+            }
+            50% {
+                box-shadow: 0 0 30px var(--accent-red), 0 0 50px var(--accent-orange);
+            }
+        }
+
+        .loading-status {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            min-height: 24px;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Bottom right corner - Player count or additional info */
+        .bottom-right-info {
+            position: absolute;
+            bottom: 60px;
+            right: 80px;
+            text-align: right;
+            z-index: 10;
+        }
+
+        .player-count {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .player-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Decorative elements */
+        .corner-accent {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent-red);
+            z-index: 5;
+            opacity: 0.5;
+        }
+
+        .corner-accent.top-left {
+            top: 40px;
+            left: 40px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-accent.bottom-right {
+            bottom: 40px;
+            right: 40px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Loading dots animation */
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% {
+                content: '';
+            }
+            40% {
+                content: '.';
+            }
+            60% {
+                content: '..';
+            }
+            80%, 100% {
+                content: '...';
+            }
+        }
+
+        /* Subtle scan line effect */
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: scan 4s linear infinite;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            .server-info {
+                top: 30px;
+                left: 30px;
+            }
+
+            .map-title {
+                font-size: 2.5rem;
+            }
+
+            .bottom-right-info {
+                bottom: 40px;
+                right: 30px;
+            }
+
+            .corner-accent {
+                width: 30px;
+                height: 30px;
+            }
+
+            .corner-accent.top-left {
+                top: 30px;
+                left: 30px;
+            }
+
+            .corner-accent.bottom-right {
+                bottom: 30px;
+                right: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="overlay"></div>
+    <div class="vignette"></div>
+    <div class="scanline"></div>
+
+    <div class="corner-accent top-left"></div>
+    <div class="corner-accent bottom-right"></div>
+
+    <div class="server-info">
+        <div class="server-name" id="serverName">SIERRA RolePlay</div>
+        <div class="server-ip" id="serverIP">octoheberg</div>
+    </div>
+
+    <div class="container">
+        <div class="title-section">
+            <div class="mode-label" id="gameMode">Dark RP</div>
+            <h1 class="map-title" id="mapName">Chargement</h1>
+            <p class="map-description" id="mapDescription">
+                Connexion au serveur en cours. Préparation de votre expérience de jeu.
+            </p>
+        </div>
+
+        <div class="loading-section">
+            <div class="loading-header">
+                <span class="loading-label">Progression</span>
+                <span class="loading-percentage" id="percentage">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="loading-status loading-dots" id="status">Connexion au serveur</div>
+        </div>
+    </div>
+
+    <div class="bottom-right-info">
+        <div class="player-count" id="playerCount">--</div>
+        <div class="player-label">rp_truenorth_v1a</div>
+    </div>
+
+    <script>
+        // Loading messages
+        const messages = [
+            "Connexion au serveur",
+            "Téléchargement des ressources",
+            "Chargement de la carte",
+            "Initialisation des addons",
+            "Synchronisation avec le serveur",
+            "Chargement des modèles",
+            "Configuration du client",
+            "Finalisation",
+            "Presque prêt"
+        ];
+
+        let currentMessage = 0;
+        let progress = 0;
+
+        // Simulate loading progress
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = document.getElementById('percentage');
+            const statusText = document.getElementById('status');
+            
+            const interval = setInterval(() => {
+                if (progress < 100) {
+                    progress += Math.random() * 2.5;
+                    if (progress > 100) progress = 100;
+                    
+                    const progressValue = Math.floor(progress);
+                    progressBar.style.width = progressValue + '%';
+                    percentage.textContent = progressValue + '%';
+                    
+                    // Update message based on progress
+                    const messageIndex = Math.floor((progress / 100) * messages.length);
+                    if (messageIndex !== currentMessage && messageIndex < messages.length) {
+                        currentMessage = messageIndex;
+                        statusText.textContent = messages[currentMessage];
+                    }
+                } else {
+                    clearInterval(interval);
+                    statusText.textContent = "Chargement terminé";
+                    statusText.classList.remove('loading-dots');
+                }
+            }, 100);
+        }
+
+        // Start loading simulation
+        updateProgress();
+
+        // GMod Loading Screen Functions
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            if (servername) {
+                document.getElementById('serverName').textContent = servername;
+            }
+            if (serverurl) {
+                document.getElementById('serverIP').textContent = serverurl;
+            }
+            if (mapname) {
+                document.getElementById('mapName').textContent = mapname.toUpperCase();
+            }
+            if (maxplayers) {
+                document.getElementById('playerCount').textContent = '0/' + maxplayers;
+            }
+            if (gamemode) {
+                document.getElementById('gameMode').textContent = gamemode.toUpperCase();
+            }
+        }
+
+        function SetStatusChanged(status) {
+            document.getElementById('status').textContent = status;
+        }
+
+        function SetFilesNeeded(needed) {
+            // Handle files needed
+        }
+
+        function SetFilesTotal(total) {
+            // Handle total files
+        }
+
+        function DownloadingFile(fileName) {
+            const shortName = fileName.length > 40 ? '...' + fileName.slice(-37) : fileName;
+            document.getElementById('status').textContent = 'Téléchargement: ' + shortName;
+        }
+
+        function SetFilesProgress(fileProgress) {
+            const progressValue = Math.floor(fileProgress);
+            document.getElementById('progressBar').style.width = progressValue + '%';
+            document.getElementById('percentage').textContent = progressValue + '%';
+        }
+    </script>
+</body>
+</html>
