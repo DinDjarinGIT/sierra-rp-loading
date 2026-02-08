@@ -5,7 +5,7 @@
 			"steam_id": "STEAM_0:0:606858679",
 			"duration": 0,
 			"admin_id": "STEAM_0:1:658671768",
-			"start_time": 1770547292,
+			"start_time": 1770547592,
 			"reason": "troll",
 			"is_permanent": true,
 			"admin_name": "FyTrOOpEr",
@@ -16,7 +16,7 @@
 			"steam_id": "STEAM_0:1:746069611",
 			"duration": 0,
 			"admin_id": "STEAM_0:1:741752817",
-			"start_time": 1770547292,
+			"start_time": 1770547592,
 			"reason": "none",
 			"is_permanent": true,
 			"admin_name": "Major",
@@ -24,6 +24,6 @@
 			"end_time": 0
 		}
 	],
-	"last_update_formatted": "08/02/2026 à 10:41:32",
-	"last_update": 1770547292
+	"last_update_formatted": "08/02/2026 à 10:46:32",
+	"last_update": 1770547592
 }
